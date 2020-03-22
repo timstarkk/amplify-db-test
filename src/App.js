@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
-import { API, graphqlOperation } from 'aws-amplify';
+import Amplify, { API, graphqlOperation } from 'aws-amplify';
+import config from './aws-exports';
+import { withAuthenticator } from 'aws-amplify-react';
+
+Amplify.configure(config);
 
 const query = `
   query {
@@ -12,7 +16,7 @@ const query = `
   }
 `
 
-export default class App extends Component {
+class App extends Component {
   state = {
     todos: []
   }
@@ -41,6 +45,7 @@ export default class App extends Component {
       }
     `
     API.graphql(graphqlOperation(addItem))
+    this.forceUpdate();
   }
 
   render() {
@@ -58,3 +63,5 @@ export default class App extends Component {
     )
   }
 }
+
+export default withAuthenticator(App, true);
