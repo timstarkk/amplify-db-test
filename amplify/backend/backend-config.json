@@ -9,8 +9,8 @@
 					"defaultAuthentication": {
 						"authenticationType": "API_KEY",
 						"apiKeyConfig": {
-							"description": "amplifyAPItestkey",
-							"apiKeyExpirationDays": "200"
+							"description": "shoppingCartTest2",
+							"apiKeyExpirationDays": "300"
 						}
 					}
 				}

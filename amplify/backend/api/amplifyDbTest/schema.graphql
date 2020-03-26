@@ -7,8 +7,10 @@ type Todo @model {
 type ShoppingCart @model {
   id: ID!
   userSub: String!
-  items: {
-    name: String
-    description: String
-  }
+  items: [Item!]
+}
+
+type Item {
+  name: String!
+  description: String
 }
