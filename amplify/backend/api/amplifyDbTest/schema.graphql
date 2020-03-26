@@ -3,3 +3,12 @@ type Todo @model {
   name: String!
   description: String
 }
+
+type ShoppingCart @model {
+  id: ID!
+  userSub: String!
+  items: {
+    name: String
+    description: String
+  }
+}

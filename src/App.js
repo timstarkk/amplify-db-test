@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import Amplify, { API, graphqlOperation } from 'aws-amplify';
+import Amplify, { API, graphqlOperation, Auth } from 'aws-amplify';
 import config from './aws-exports';
 import { withAuthenticator } from 'aws-amplify-react';
 
@@ -18,7 +18,8 @@ const query = `
 
 class App extends Component {
   state = {
-    todos: []
+    todos: [],
+    sub: ""
   }
 
   async componentDidMount() {
@@ -48,17 +49,37 @@ class App extends Component {
     this.forceUpdate();
   }
 
+  handleAuthButton() {
+    Auth.currentSession()
+      .then(data => {
+        let sub = data.accessToken.payload.sub;
+
+        this.setState({
+          sub
+        })
+      })
+      .catch(err => console.log(err));
+  }
+
+  handleAddToCart(item) {
+    console.log(item)
+  }
+
   render() {
     return (
       <div>
         {
           this.state.todos.map((todo, index) => (
-            <p key={index}>{todo.name}</p>
+            <section key={index}>
+              <p>{todo.name}</p> <button onClick={() => { this.handleAddToCart(todo) }}>add to cart</button>
+            </section>
           ))
         }
         <input type="text" id="input1" placeholder="name..." />
         <input type="text" id="input2" placeholder="description..." />
         <button id="theButton" onClick={() => { this.handleButtonClick() }}>add item</button>
+        <button id="authButton" onClick={() => { this.handleAuthButton() }}>currentSession</button>
+        <button id="subButton" onClick={() => { console.log(this.state.sub) }}>user sub</button>
       </div >
     )
   }
