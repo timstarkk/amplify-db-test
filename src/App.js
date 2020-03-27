@@ -23,6 +23,7 @@ class App extends Component {
   }
 
   async componentDidMount() {
+    this.handleAuthButton();
     const data = await API.graphql(graphqlOperation(query));
     this.setState({
       todos: data.data.listTodos.items
@@ -61,8 +62,80 @@ class App extends Component {
       .catch(err => console.log(err));
   }
 
-  handleAddToCart(item) {
-    console.log(item)
+  handleAddToCart = async (item) => {
+    let currentSub = this.state.sub;
+    console.log(item);
+    let findCart = `
+      query {
+        listShoppingCarts(filter:{
+          userSub: {
+            contains: "${currentSub}"
+          }
+        }) {
+          items {
+            id
+            userSub
+            items {name description}
+          }
+        }
+      }
+    `
+    API.graphql(graphqlOperation(findCart)).then(response => {
+      if (response.data.listShoppingCarts.items[0]) {
+        let tempItems = [];
+        tempItems = response.data.listShoppingCarts.items[0].items.map(item => {
+          return item;
+        })
+        tempItems.push({
+          name: `${item.name}`,
+          description: `${item.description}`
+        })
+        let tempJson = JSON.stringify(tempItems);
+        let mutationItems = tempJson.replace(/"([^"]+)":/g, '$1:');
+
+        console.log(mutationItems);
+
+
+
+
+        let cartId = response.data.listShoppingCarts.items[0].id
+        // run an update to the shopping cart for current user.
+        let updateCart = `
+          mutation {
+            updateShoppingCart(input: {
+              id: "${cartId}"
+              items: ${mutationItems}
+            }){
+              id userSub items{ name description }
+            }
+          }
+        `
+        console.log(cartId);
+        API.graphql(graphqlOperation(updateCart)).then(res => {
+          console.log('cart updated successfully');
+        }).catch(error => console.log(error))
+
+      } else {
+        // create a shopping cart for current user with selected item.
+        let createCart = `
+          mutation {
+            createShoppingCart(input: {
+              userSub: "${currentSub}"
+              items: [{
+                name: ${item.name}
+                description: ${item.description}
+              }]
+            }){
+              id userSub items{ name description }
+            }
+          }
+        `
+
+        API.graphql(graphqlOperation(createCart)).then(res => {
+          console.log('cart created successfully');
+        })
+      }
+    })
   }
 
   render() {
