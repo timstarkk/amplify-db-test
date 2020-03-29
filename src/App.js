@@ -3,6 +3,8 @@ import './App.css';
 import Amplify, { API, graphqlOperation, Auth } from 'aws-amplify';
 import config from './aws-exports';
 import { withAuthenticator } from 'aws-amplify-react';
+import SignUpForm from './components/SignUpForm';
+import SignInForm from './components/SignInForm';
 
 Amplify.configure(config);
 
@@ -17,9 +19,24 @@ const query = `
 `
 
 class App extends Component {
-  state = {
-    todos: [],
-    sub: ""
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      userSignedUp: false,
+      todos: [],
+      sub: ""
+    }
+
+    this.handleToggle = this.handleToggle.bind(this);
+  }
+
+  handleToggle() {
+    const { userSignedUp } = this.state;
+
+    this.setState({
+      userSignedUp: !userSignedUp
+    })
   }
 
   async componentDidMount() {
@@ -139,23 +156,31 @@ class App extends Component {
   }
 
   render() {
+    const { userSignedUp } = this.state;
+
     return (
-      <div>
-        {
-          this.state.todos.map((todo, index) => (
-            <section key={index}>
-              <p>{todo.name}</p> <button onClick={() => { this.handleAddToCart(todo) }}>add to cart</button>
-            </section>
-          ))
-        }
-        <input type="text" id="input1" placeholder="name..." />
-        <input type="text" id="input2" placeholder="description..." />
-        <button id="theButton" onClick={() => { this.handleButtonClick() }}>add item</button>
-        <button id="authButton" onClick={() => { this.handleAuthButton() }}>currentSession</button>
-        <button id="subButton" onClick={() => { console.log(this.state.sub) }}>user sub</button>
-      </div >
+      <>
+        <div>
+          <button onClick={this.handleToggle}>Toggle</button>
+          {!userSignedUp ? <SignUpForm /> : <SignInForm />}
+        </div>
+        <div>
+          {
+            this.state.todos.map((todo, index) => (
+              <section key={index}>
+                <p>{todo.name}</p> <button onClick={() => { this.handleAddToCart(todo) }}>add to cart</button>
+              </section>
+            ))
+          }
+          <input type="text" id="input1" placeholder="name..." />
+          <input type="text" id="input2" placeholder="description..." />
+          <button id="theButton" onClick={() => { this.handleButtonClick() }}>add item</button>
+          <button id="authButton" onClick={() => { this.handleAuthButton() }}>currentSession</button>
+          <button id="subButton" onClick={() => { console.log(this.state.sub) }}>user sub</button>
+        </div >
+      </>
     )
   }
 }
 
-export default withAuthenticator(App, true);
+export default App;
