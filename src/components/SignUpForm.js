@@ -9,7 +9,7 @@ export default class SignUpForm extends Component {
             username: '',
             password: '',
             email: '',
-            phoneNumber: '',
+            phone_number: '',
             confirmationCode: '',
             signedUp: false
         }
@@ -19,14 +19,14 @@ export default class SignUpForm extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        const { signedUp, username, password, email, phoneNumber, confirmationCode } = this.state;
+        const { signedUp, username, password, email, phone_number, confirmationCode } = this.state;
         if (!signedUp) {
             Auth.signUp({
                 username,
                 password,
                 attributes: {
                     email,
-                    phoneNumber
+                    phone_number
                 }
             })
                 .then(() => console.log('signed up'))
@@ -71,7 +71,7 @@ export default class SignUpForm extends Component {
                     <label>Email</label>
                     <input type="text" name="email" onChange={this.handleChange} />
                     <label>Phone Number</label>
-                    <input type="text" name="phoneNumber" onChange={this.handleChange} />
+                    <input type="text" name="phone_number" onChange={this.handleChange} />
                     <button>Sign Up</button>
                 </form>
             )

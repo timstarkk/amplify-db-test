@@ -16,7 +16,7 @@ export default class SignInForm extends Component {
 
     handleSubmit(e) {
         e.preventDefault();
-        const { signedIn, username, password, email, phoneNumber } = this.state;
+        const { signedIn, username, password, email, phone_number } = this.state;
         Auth.signIn({
             username,
             password
